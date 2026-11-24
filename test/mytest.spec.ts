@@ -80,8 +80,12 @@ test('Бараа сагслах', async ({ page }) => {
   ).toBeVisible();
 
   // 8. Системээс гарах
+  await page.getByRole('button', { name: 'Continue Shopping' }).click();
+  await expect(page).toHaveURL(/inventory\.html$/);
   await page.locator('#react-burger-menu-btn').click();
-  await page.locator('#logout_sidebar_link').click();
+  const logoutButton = page.locator('#logout_sidebar_link');
+  await expect(logoutButton).toBeVisible();
+  await logoutButton.click();
 
   // 9. Нэвтрэх хуудас руу буцсаныг шалгах
   await expect(
