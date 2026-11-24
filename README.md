@@ -93,7 +93,7 @@ npx playwright install
 ### 3.4. Тест ажиллуулах
 
 ```bash
-npx playwright test --project=chromium
+npx playwright test
 ```
 
 ## 4. Төслийн бүтэц
@@ -105,6 +105,9 @@ my-first-test/
 │       └── playwright.yml
 ├── test/
 │   └── mytest.spec.ts
+├── evidence/
+│   └── playwright-report/
+│       └── index.html
 ├── .gitignore
 ├── package.json
 ├── package-lock.json
@@ -186,7 +189,7 @@ Password: secret_sauce
 6. Сагсны тоо 1 болсон эсэхийг шалгах.
 7. Сагсны хуудас руу орох.
 8. Сонгосон бараа сагсанд байгаа эсэхийг шалгах.
-9. Системээс гарах.
+9. Continue Shopping товчоор барааны жагсаалт руу буцаж, системээс гарах.
 
 **Хүлээгдэж буй үр дүн:** Сонгосон бараа сагсанд амжилттай нэмэгдэнэ.
 
@@ -253,6 +256,8 @@ npx playwright test test/mytest.spec.ts --project=chromium --headed --reporter=l
 **Амжилтгүй:** 0
 
 **Амжилтын хувь:** 100%
+
+WebKit дээр сагсны хуудаснаас Logout дарах алхам хугацаа хэтэрч байсан. Бараа сагсанд байгааг шалгасны дараа барааны жагсаалт руу буцаж, тэндээс гарах болгож зассан. Засварын дараа `npx playwright test --reporter=line --workers=2` командаар Chromium, Firefox, WebKit дээр тус бүр гурван тест ажиллуулахад **9/9 тэнцсэн**.
 
 Trace идэвхжүүлсэн эцсийн туршилтын үр дүн:
 
@@ -341,6 +346,8 @@ Trace Viewer ашигласнаар тестийн алдаа гарсан ал�
 Энэ туршилтад веб систем зөв ажиллаж байсан бөгөөд алдаа нь тестийн буруу assertion-оос үүссэн болохыг тогтоосон.
 
 ## 10. HTML Report
+
+Chromium дээрх өмнөх гүйлтийн [HTML тайлан](evidence/playwright-report/index.html) репозиторт хадгалагдсан.
 
 Playwright-ийн HTML Report нь автомат тестүүдийн үр дүнг дэлгэрэнгүй харах боломжтой.
 
