@@ -1,36 +1,49 @@
-
 import { test, expect } from '@playwright/test';
 
-// Тест 1: Амжилттай нэвтрэх
+// Тест 1: Амжилттай нэвтрэх болон гарах
 test('Амжилттай нэвтрэх', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com/');
 
+  // Веб сайтыг нээх
+  await page.goto('/');
+
+  // Хэрэглэгчийн мэдээлэл оруулах
   await page.getByPlaceholder('Username').fill('standard_user');
   await page.getByPlaceholder('Password').fill('secret_sauce');
 
+  // Нэвтрэх
   await page.getByRole('button', { name: 'Login' }).click();
 
-  await expect(page).toHaveURL(/inventory.html/);
-  await expect(page.getByText('Products')).toBeVisible();
+  // Амжилттай нэвтэрснийг шалгах
+  await expect(page).toHaveURL(/inventory\.html$/);
+  await expect(
+    page.getByText('Products', { exact: true })
+  ).toBeVisible();
 
-  
-  // Системээс гарах цэсийг нээх
-  await page.locator('#react-burger-menu-btn').click();
+  // Цэс нээх
+  await page.getByRole('button', {
+    name: 'Open Menu'
+  }).click();
 
-  // Logout элементийг ID-аар олж дарах
-  const logoutButton = page.locator('#logout_sidebar_link');
-
-  await expect(logoutButton).toBeVisible();
-  await logoutButton.click();
+  // Системээс гарах
+  await page.getByRole('button', {
+    name: 'Logout',
+    exact: true
+  }).click();
 
   // Нэвтрэх хуудас руу буцсаныг шалгах
-  await expect(page.getByRole('button', { name: 'Login' }))
-    .toBeVisible();
-});
+  await expect(page).toHaveURL(
+    'https://www.saucedemo.com/'
+  );
 
+  await expect(
+    page.getByRole('button', { name: 'Login' })
+  ).toBeVisible();
+});
+// Тест 2: Амжилтгүй нэвтрэх
 test('Амжилтгүй нэвтрэх', async ({ page }) => {
-  // SauceDemo сайтыг нээх
-  await page.goto('https://www.saucedemo.com/');
+
+  // Веб сайтыг нээх
+  await page.goto('/');
 
   // Зөв хэрэглэгчийн нэр, буруу нууц үг оруулах
   await page.getByPlaceholder('Username').fill('standard_user');
@@ -39,56 +52,52 @@ test('Амжилтгүй нэвтрэх', async ({ page }) => {
   // Нэвтрэх товч дарах
   await page.getByRole('button', { name: 'Login' }).click();
 
-  // Алдааны мэдээлэл гарч ирснийг шалгах
+  // Алдааны мэдээлэл гарсныг шалгах
   await expect(
     page.getByText(/Username and password do not match/)
   ).toBeVisible();
 
-  // Нэвтрэх хуудас дээр хэвээр байгааг шалгах
+  // Нэвтрэх хуудсан дээр хэвээр байгааг шалгах
   await expect(
     page.getByRole('button', { name: 'Login' })
   ).toBeVisible();
 });
-
+// Тест 3: Бараа сагслах
 test('Бараа сагслах', async ({ page }) => {
-  // 1. Веб сайт руу орох
-  await page.goto('https://www.saucedemo.com/');
+
+  // 1. Веб сайтыг нээх
+  await page.goto('/');
 
   // 2. Системд нэвтрэх
   await page.getByPlaceholder('Username').fill('standard_user');
   await page.getByPlaceholder('Password').fill('secret_sauce');
   await page.getByRole('button', { name: 'Login' }).click();
 
-  // 3. Нэвтэрсэн эсэхийг шалгах
-  await expect(page).toHaveURL(/inventory.html/);
+  // 3. Амжилттай нэвтэрснийг шалгах
+  await expect(page).toHaveURL(/inventory\.html$/);
 
-  
-  // 4. Sauce Labs Backpack барааг сагслах
-  await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
+  // 4. Бараа сонгож сагслах
+  const product = page.locator('.inventory_item').filter({
+    hasText: 'Sauce Labs Backpack'
+  });
 
-  // 5. Сагсанд 1 бараа нэмэгдсэнийг шалгах
+  await product.getByRole('button', {
+    name: 'Add to cart'
+  }).click();
+
+  // 5. Сагсанд нэг бараа нэмэгдсэнийг шалгах
   await expect(
     page.locator('.shopping_cart_badge')
   ).toHaveText('1');
 
-  // 6. Сагс руу орох
+  // 6. Сагсны хуудас руу орох
   await page.locator('.shopping_cart_link').click();
 
-  // 7. Бараа сагсанд байгааг шалгах
-  await expect(
-    page.getByText('Sauce Labs Backpack')
-  ).toBeVisible();
+  // 7. Сагсны хуудас нээгдсэнийг шалгах
+  await expect(page).toHaveURL(/cart\.html$/);
 
-  // 8. Системээс гарах
-  await page.getByRole('button', { name: 'Continue Shopping' }).click();
-  await expect(page).toHaveURL(/inventory\.html$/);
-  await page.locator('#react-burger-menu-btn').click();
-  const logoutButton = page.locator('#logout_sidebar_link');
-  await expect(logoutButton).toBeVisible();
-  await logoutButton.click();
-
-  // 9. Нэвтрэх хуудас руу буцсаныг шалгах
+  // 8. Сонгосон бараа сагсанд байгааг шалгах
   await expect(
-    page.getByRole('button', { name: 'Login' })
+    page.getByText('Sauce Labs Backpack', { exact: true })
   ).toBeVisible();
 });
